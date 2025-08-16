@@ -1,0 +1,205 @@
+.error-message {
+  background: var(--color-white);
+  border: 2px solid var(--color-error);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  margin: var(--spacing-lg) 0;
+  max-width: 600px;
+  box-shadow: var(--shadow-md);
+}
+
+.error-header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+}
+
+.error-icon {
+  font-size: var(--text-xl);
+  flex-shrink: 0;
+  margin-top: var(--spacing-xs);
+}
+
+.error-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.error-title {
+  margin: 0 0 var(--spacing-sm) 0;
+  font-size: var(--text-lg);
+  font-weight: var(--font-bold);
+  color: var(--color-error);
+  letter-spacing: -0.025em;
+}
+
+.error-description {
+  margin: 0;
+  color: var(--color-gray-700);
+  line-height: 1.6;
+  font-size: var(--text-base);
+}
+
+.error-dismiss {
+  background: none;
+  border: none;
+  font-size: var(--text-xl);
+  color: var(--color-gray-400);
+  cursor: pointer;
+  padding: var(--spacing-xs);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+}
+
+.error-dismiss:hover {
+  background: var(--color-gray-100);
+  color: var(--color-gray-600);
+}
+
+.error-suggestions {
+  margin-bottom: var(--spacing-lg);
+}
+
+.error-suggestions h4 {
+  margin: 0 0 var(--spacing-sm) 0;
+  font-size: var(--text-sm);
+  font-weight: var(--font-bold);
+  color: var(--color-black);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.error-suggestions ul {
+  margin: 0;
+  padding-left: var(--spacing-xl);
+  color: var(--color-gray-700);
+}
+
+.error-suggestions li {
+  margin-bottom: var(--spacing-xs);
+  line-height: 1.5;
+  font-size: var(--text-sm);
+}
+
+.error-actions {
+  display: flex;
+  gap: var(--spacing-md);
+}
+
+.retry-button {
+  background: var(--color-black);
+  color: var(--color-white);
+  border: 2px solid var(--color-black);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.retry-button:hover {
+  background: var(--color-gray-800);
+  border-color: var(--color-gray-800);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.retry-button:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/* Error type specific styling - keeping minimal black/white theme */
+.error-authentication,
+.error-not_found,
+.error-rate_limit,
+.error-network {
+  background: var(--color-white);
+  border-color: var(--color-error);
+}
+
+.error-authentication .error-title,
+.error-not_found .error-title,
+.error-rate_limit .error-title,
+.error-network .error-title {
+  color: var(--color-error);
+}
+
+.error-authentication .error-description,
+.error-authentication .error-suggestions,
+.error-not_found .error-description,
+.error-not_found .error-suggestions,
+.error-rate_limit .error-description,
+.error-rate_limit .error-suggestions,
+.error-network .error-description,
+.error-network .error-suggestions {
+  color: var(--color-gray-700);
+}
+
+.error-authentication .retry-button,
+.error-not_found .retry-button,
+.error-rate_limit .retry-button,
+.error-network .retry-button {
+  background: var(--color-black);
+  border-color: var(--color-black);
+}
+
+.error-authentication .retry-button:hover,
+.error-not_found .retry-button:hover,
+.error-rate_limit .retry-button:hover,
+.error-network .retry-button:hover {
+  background: var(--color-gray-800);
+  border-color: var(--color-gray-800);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .error-message {
+    margin: var(--spacing-md) 0;
+    padding: var(--spacing-lg);
+  }
+  
+  .error-header {
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+  }
+  
+  .error-icon {
+    font-size: var(--text-lg);
+  }
+  
+  .error-title {
+    font-size: var(--text-base);
+  }
+  
+  .error-suggestions {
+    margin-bottom: var(--spacing-md);
+  }
+  
+  .error-suggestions ul {
+    padding-left: var(--spacing-lg);
+  }
+  
+  .error-actions {
+    flex-direction: column;
+  }
+  
+  .retry-button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .error-message {
+    margin: var(--spacing-sm) 0;
+    padding: var(--spacing-md);
+  }
+}

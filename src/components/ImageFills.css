@@ -1,0 +1,263 @@
+.image-fills-container {
+  width: 100%;
+  padding: 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+.detail-panel .image-fills-container {
+  padding: 12px;
+  border: none;
+  border-radius: 0;
+  background-color: transparent;
+}
+
+.image-fills-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 120px;
+  padding: 20px;
+}
+
+.image-fills-error {
+  padding: 16px;
+}
+
+.image-fills-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 120px;
+  padding: 20px;
+  color: #999;
+  text-align: center;
+}
+
+.empty-icon {
+  font-size: 32px;
+  margin-bottom: 8px;
+  opacity: 0.5;
+}
+
+.empty-text {
+  font-size: 14px;
+  opacity: 0.7;
+}
+
+.image-fills-header {
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.image-fills-header h3 {
+  margin: 0 0 4px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+.image-fills-description {
+  margin: 0;
+  font-size: 12px;
+  color: #666;
+}
+
+.image-fills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.detail-panel .image-fills-grid {
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.image-fill-item {
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  overflow: hidden;
+  background-color: white;
+  transition: box-shadow 0.2s ease;
+}
+
+.image-fill-item:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.image-fill-preview {
+  position: relative;
+  width: 100%;
+  height: 160px;
+  background-color: #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.image-fill-loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.9);
+  z-index: 2;
+}
+
+.image-fill-error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #999;
+  text-align: center;
+}
+
+.image-fill-error-state .error-icon {
+  font-size: 20px;
+  margin-bottom: 4px;
+}
+
+.image-fill-error-state .error-text {
+  font-size: 11px;
+}
+
+.image-fill-error-state .retry-button {
+  background: #000;
+  color: #fff;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  margin-top: 4px;
+}
+
+.image-fill-error-state .retry-button:hover {
+  background: #333;
+}
+
+.image-fill-image {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  object-position: center;
+  transition: opacity 0.3s ease;
+  display: block;
+}
+
+.image-fill-image.loading {
+  opacity: 0;
+}
+
+.image-fill-image.loaded {
+  opacity: 1;
+}
+
+.image-fill-image.error {
+  display: none;
+}
+
+.image-fill-info {
+  padding: 12px;
+  background-color: white;
+}
+
+.image-fill-id,
+.image-fill-url,
+.image-fill-processed {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 8px;
+}
+
+.image-fill-id:last-child,
+.image-fill-url:last-child,
+.image-fill-processed:last-child {
+  margin-bottom: 0;
+}
+
+.image-fill-info label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #666;
+  margin-bottom: 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.image-fill-info .monospace {
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 10px;
+  color: #333;
+  background-color: #f5f5f5;
+  padding: 2px 4px;
+  border-radius: 2px;
+  word-break: break-all;
+}
+
+.image-url-link {
+  font-size: 11px;
+  color: #0066cc;
+  text-decoration: none;
+  padding: 2px 4px;
+  border-radius: 2px;
+  transition: background-color 0.2s ease;
+}
+
+.image-url-link:hover {
+  background-color: #f0f8ff;
+  text-decoration: underline;
+}
+
+.processed-indicator {
+  font-size: 10px;
+  color: #28a745;
+  background-color: #d4edda;
+  padding: 2px 4px;
+  border-radius: 2px;
+  font-weight: 500;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .image-fills-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 12px;
+  }
+  
+  .image-fill-preview {
+    height: 140px;
+  }
+  
+  .image-fill-info {
+    padding: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .image-fills-container {
+    padding: 12px;
+  }
+  
+  .image-fills-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  
+  .image-fill-preview {
+    height: 120px;
+  }
+}

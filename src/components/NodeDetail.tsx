@@ -1,18 +1,30 @@
-import React, { useState } from 'react';
-import type { NodeDetailProps, FigmaNode, Color, Fill, Stroke, Effect, BoundingBox } from '../types/figma';
-import { copyToClipboard } from '../utils/clipboard';
-import { hasImageFills } from '../utils/imageFills';
-import ErrorMessage from './ErrorMessage';
-import ImagePreview from './ImagePreview';
-import './NodeDetail.css';
+import React, { useState } from "react";
+import type {
+  NodeDetailProps,
+  FigmaNode,
+  Color,
+  Fill,
+  Stroke,
+  Effect,
+  BoundingBox,
+} from "../types/figma";
+import { copyToClipboard } from "../utils/clipboard";
+import { hasImageFills } from "../utils/imageFills";
+import ErrorMessage from "./ErrorMessage";
+import ImagePreview from "./ImagePreview";
+import "./NodeDetail.css";
 
-const NodeDetail: React.FC<NodeDetailProps> = ({ node, credentials, onCopy }) => {
+const NodeDetail: React.FC<NodeDetailProps> = ({
+  node,
+  credentials,
+  onCopy,
+}) => {
   const [error, setError] = useState<string | null>(null);
 
   // Validate node data
   if (!node || !node.id) {
     return (
-      <ErrorMessage 
+      <ErrorMessage
         error="Invalid node data. Unable to display node details."
         onDismiss={() => setError(null)}
       />
@@ -23,14 +35,24 @@ const NodeDetail: React.FC<NodeDetailProps> = ({ node, credentials, onCopy }) =>
   const shouldShowPreview = (node: FigmaNode): boolean => {
     // Show preview for visual nodes that can be rendered
     const visualNodeTypes = [
-      'FRAME', 'GROUP', 'COMPONENT', 'INSTANCE', 
-      'RECTANGLE', 'ELLIPSE', 'POLYGON', 'STAR', 'VECTOR',
-      'TEXT', 'LINE'
+      "FRAME",
+      "GROUP",
+      "COMPONENT",
+      "INSTANCE",
+      "RECTANGLE",
+      "ELLIPSE",
+      "POLYGON",
+      "STAR",
+      "VECTOR",
+      "TEXT",
+      "LINE",
     ];
-    
-    return visualNodeTypes.includes(node.type) && 
-           node.visible !== false && 
-           credentials !== undefined;
+
+    return (
+      visualNodeTypes.includes(node.type) &&
+      node.visible !== false &&
+      credentials !== undefined
+    );
   };
 
   // Helper functions for formatting
@@ -40,72 +62,87 @@ const NodeDetail: React.FC<NodeDetailProps> = ({ node, credentials, onCopy }) =>
       const g = Math.round(color.g * 255);
       const b = Math.round(color.b * 255);
       const a = color.a;
-      
+
       if (a === 1) {
         return `rgb(${r}, ${g}, ${b})`;
       }
       return `rgba(${r}, ${g}, ${b}, ${a})`;
     } catch (err) {
-      console.error('Error formatting color:', err);
-      return 'rgba(0, 0, 0, 1)';
+      console.error("Error formatting color:", err);
+      return "rgba(0, 0, 0, 1)";
     }
   };
 
   const formatColorHex = (color: Color): string => {
-    const r = Math.round(color.r * 255).toString(16).padStart(2, '0');
-    const g = Math.round(color.g * 255).toString(16).padStart(2, '0');
-    const b = Math.round(color.b * 255).toString(16).padStart(2, '0');
+    const r = Math.round(color.r * 255)
+      .toString(16)
+      .padStart(2, "0");
+    const g = Math.round(color.g * 255)
+      .toString(16)
+      .padStart(2, "0");
+    const b = Math.round(color.b * 255)
+      .toString(16)
+      .padStart(2, "0");
     return `#${r}${g}${b}`;
   };
 
   const formatFills = (fills: Fill[]): string[] => {
     return fills
-      .filter(fill => fill.visible !== false)
-      .map(fill => {
-        if (fill.type === 'SOLID' && fill.color) {
+      .filter((fill) => fill.visible !== false)
+      .map((fill) => {
+        if (fill.type === "SOLID" && fill.color) {
           return `background-color: ${formatColor(fill.color)};`;
         }
         return `/* ${fill.type} fill */`;
       });
   };
 
-  const formatStrokes = (strokes: Stroke[], strokeWeight?: number): string[] => {
+  const formatStrokes = (
+    strokes: Stroke[],
+    strokeWeight?: number
+  ): string[] => {
     const result: string[] = [];
-    
+
     if (strokeWeight) {
       result.push(`border-width: ${strokeWeight}px;`);
     }
-    
+
     strokes
-      .filter(stroke => stroke.visible !== false)
-      .forEach(stroke => {
-        if (stroke.type === 'SOLID' && stroke.color) {
+      .filter((stroke) => stroke.visible !== false)
+      .forEach((stroke) => {
+        if (stroke.type === "SOLID" && stroke.color) {
           result.push(`border-color: ${formatColor(stroke.color)};`);
           result.push(`border-style: solid;`);
         }
       });
-    
+
     return result;
   };
 
   const formatEffects = (effects: Effect[]): string[] => {
     return effects
-      .filter(effect => effect.visible !== false)
-      .map(effect => {
+      .filter((effect) => effect.visible !== false)
+      .map((effect) => {
         switch (effect.type) {
-          case 'DROP_SHADOW':
-            { const offsetX = effect.offset?.x || 0;
+          case "DROP_SHADOW": {
+            const offsetX = effect.offset?.x || 0;
             const offsetY = effect.offset?.y || 0;
-            const color = effect.color ? formatColor(effect.color) : 'rgba(0,0,0,0.25)';
-            return `box-shadow: ${offsetX}px ${offsetY}px ${effect.radius}px ${color};`; }
-          case 'INNER_SHADOW':
-            { const insetX = effect.offset?.x || 0;
+            const color = effect.color
+              ? formatColor(effect.color)
+              : "rgba(0,0,0,0.25)";
+            return `box-shadow: ${offsetX}px ${offsetY}px ${effect.radius}px ${color};`;
+          }
+          case "INNER_SHADOW": {
+            const insetX = effect.offset?.x || 0;
             const insetY = effect.offset?.y || 0;
-            const insetColor = effect.color ? formatColor(effect.color) : 'rgba(0,0,0,0.25)';
-            return `box-shadow: inset ${insetX}px ${insetY}px ${effect.radius}px ${insetColor};`; }
-          case 'LAYER_BLUR':
+            const insetColor = effect.color
+              ? formatColor(effect.color)
+              : "rgba(0,0,0,0.25)";
+            return `box-shadow: inset ${insetX}px ${insetY}px ${effect.radius}px ${insetColor};`;
+          }
+          case "LAYER_BLUR":
             return `filter: blur(${effect.radius}px);`;
-          case 'BACKGROUND_BLUR':
+          case "BACKGROUND_BLUR":
             return `backdrop-filter: blur(${effect.radius}px);`;
           default:
             return `/* ${effect.type} effect */`;
@@ -119,134 +156,141 @@ const NodeDetail: React.FC<NodeDetailProps> = ({ node, credentials, onCopy }) =>
       `left: ${box.x}px;`,
       `top: ${box.y}px;`,
       `width: ${box.width}px;`,
-      `height: ${box.height}px;`
+      `height: ${box.height}px;`,
     ];
   };
 
   const formatAutoLayout = (node: FigmaNode): string[] => {
     const result: string[] = [];
-    
+
     if (node.layoutMode) {
       result.push(`display: flex;`);
       result.push(`flex-direction: ${node.layoutMode.toLowerCase()};`);
     }
-    
+
     if (node.itemSpacing) {
       result.push(`gap: ${node.itemSpacing}px;`);
     }
-    
-    if (node.paddingTop || node.paddingRight || node.paddingBottom || node.paddingLeft) {
+
+    if (
+      node.paddingTop ||
+      node.paddingRight ||
+      node.paddingBottom ||
+      node.paddingLeft
+    ) {
       const top = node.paddingTop || 0;
       const right = node.paddingRight || 0;
       const bottom = node.paddingBottom || 0;
       const left = node.paddingLeft || 0;
       result.push(`padding: ${top}px ${right}px ${bottom}px ${left}px;`);
     }
-    
+
     if (node.primaryAxisAlignItems) {
       const alignMap = {
-        'MIN': 'flex-start',
-        'CENTER': 'center',
-        'MAX': 'flex-end',
-        'SPACE_BETWEEN': 'space-between'
+        MIN: "flex-start",
+        CENTER: "center",
+        MAX: "flex-end",
+        SPACE_BETWEEN: "space-between",
       };
       const alignValue = alignMap[node.primaryAxisAlignItems];
-      if (node.layoutMode === 'HORIZONTAL') {
+      if (node.layoutMode === "HORIZONTAL") {
         result.push(`justify-content: ${alignValue};`);
       } else {
         result.push(`align-items: ${alignValue};`);
       }
     }
-    
+
     if (node.counterAxisAlignItems) {
       const alignMap = {
-        'MIN': 'flex-start',
-        'CENTER': 'center',
-        'MAX': 'flex-end'
+        MIN: "flex-start",
+        CENTER: "center",
+        MAX: "flex-end",
       };
       const alignValue = alignMap[node.counterAxisAlignItems];
-      if (node.layoutMode === 'HORIZONTAL') {
+      if (node.layoutMode === "HORIZONTAL") {
         result.push(`align-items: ${alignValue};`);
       } else {
         result.push(`justify-content: ${alignValue};`);
       }
     }
-    
+
     return result;
   };
 
   const formatTextStyle = (node: FigmaNode): string[] => {
     const result: string[] = [];
-    
+
     if (node.style) {
       result.push(`font-family: "${node.style.fontFamily}";`);
       result.push(`font-weight: ${node.style.fontWeight};`);
       result.push(`font-size: ${node.style.fontSize}px;`);
-      
+
       if (node.style.lineHeightPx) {
         result.push(`line-height: ${node.style.lineHeightPx}px;`);
       }
-      
+
       if (node.style.letterSpacing) {
         result.push(`letter-spacing: ${node.style.letterSpacing}px;`);
       }
-      
+
       const textAlignMap = {
-        'LEFT': 'left',
-        'CENTER': 'center',
-        'RIGHT': 'right',
-        'JUSTIFIED': 'justify'
+        LEFT: "left",
+        CENTER: "center",
+        RIGHT: "right",
+        JUSTIFIED: "justify",
       };
-      result.push(`text-align: ${textAlignMap[node.style.textAlignHorizontal]};`);
+      result.push(
+        `text-align: ${textAlignMap[node.style.textAlignHorizontal]};`
+      );
     }
-    
+
     return result;
   };
 
   const generateCSS = (): string => {
     const cssRules: string[] = [];
-    
+
     // Position and size
     if (node.absoluteBoundingBox) {
       cssRules.push(...formatBoundingBox(node.absoluteBoundingBox));
     }
-    
+
     // Fills (background)
     if (node.fills && node.fills.length > 0) {
       cssRules.push(...formatFills(node.fills));
     }
-    
+
     // Strokes (borders)
     if (node.strokes && node.strokes.length > 0) {
       cssRules.push(...formatStrokes(node.strokes, node.strokeWeight));
     }
-    
+
     // Effects (shadows, blur)
     if (node.effects && node.effects.length > 0) {
       cssRules.push(...formatEffects(node.effects));
     }
-    
+
     // Corner radius
     if (node.cornerRadius) {
       cssRules.push(`border-radius: ${node.cornerRadius}px;`);
     }
-    
+
     // Opacity
     if (node.opacity !== undefined && node.opacity !== 1) {
       cssRules.push(`opacity: ${node.opacity};`);
     }
-    
+
     // Auto Layout (Flexbox)
     if (node.layoutMode) {
       cssRules.push(...formatAutoLayout(node));
     }
-    
+
     // Text styles
-    if (node.type === 'TEXT' && node.style) {
+    if (node.type === "TEXT" && node.style) {
       cssRules.push(...formatTextStyle(node));
     }
-    
-    return cssRules.join('\n');
+
+    return cssRules.join("\n");
   };
 
   const handleCopyCSS = async () => {
@@ -257,11 +301,11 @@ const NodeDetail: React.FC<NodeDetailProps> = ({ node, credentials, onCopy }) =>
           if (onCopy) {
             onCopy(css);
           }
-        }
+        },
       });
     } catch (err) {
-      console.error('Error copying CSS:', err);
-      setError('Failed to copy CSS to clipboard');
+      console.error("Error copying CSS:", err);
+      setError("Failed to copy CSS to clipboard");
     }
   };
 
@@ -273,11 +317,11 @@ const NodeDetail: React.FC<NodeDetailProps> = ({ node, credentials, onCopy }) =>
           if (onCopy) {
             onCopy(json);
           }
-        }
+        },
       });
     } catch (err) {
-      console.error('Error copying JSON:', err);
-      setError('Failed to copy JSON to clipboard');
+      console.error("Error copying JSON:", err);
+      setError("Failed to copy JSON to clipboard");
     }
   };
 
@@ -300,7 +344,7 @@ const NodeDetail: React.FC<NodeDetailProps> = ({ node, credentials, onCopy }) =>
         {node.visible !== undefined && (
           <div className="property-item">
             <label>Visible:</label>
-            <span>{node.visible ? 'Yes' : 'No'}</span>
+            <span>{node.visible ? "Yes" : "No"}</span>
           </div>
         )}
         {node.componentId && (
@@ -315,7 +359,7 @@ const NodeDetail: React.FC<NodeDetailProps> = ({ node, credentials, onCopy }) =>
 
   const renderDimensions = () => {
     if (!node.absoluteBoundingBox) return null;
-    
+
     const box = node.absoluteBoundingBox;
     return (
       <div className="property-section">
@@ -344,7 +388,7 @@ const NodeDetail: React.FC<NodeDetailProps> = ({ node, credentials, onCopy }) =>
 
   const renderFills = () => {
     if (!node.fills || node.fills.length === 0) return null;
-    
+
     return (
       <div className="property-section">
         <h3>Fills</h3>
@@ -352,17 +396,21 @@ const NodeDetail: React.FC<NodeDetailProps> = ({ node, credentials, onCopy }) =>
           <div key={index} className="fill-item">
             <div className="fill-header">
               <span className="fill-type">{fill.type}</span>
-              {fill.visible === false && <span className="hidden-badge">Hidden</span>}
+              {fill.visible === false && (
+                <span className="hidden-badge">Hidden</span>
+              )}
             </div>
             {fill.color && (
               <div className="color-display">
-                <div 
-                  className="color-swatch" 
+                <div
+                  className="color-swatch"
                   style={{ backgroundColor: formatColor(fill.color) }}
                 />
                 <div className="color-values">
                   <span className="monospace">{formatColor(fill.color)}</span>
-                  <span className="monospace">{formatColorHex(fill.color)}</span>
+                  <span className="monospace">
+                    {formatColorHex(fill.color)}
+                  </span>
                 </div>
               </div>
             )}
@@ -373,8 +421,8 @@ const NodeDetail: React.FC<NodeDetailProps> = ({ node, credentials, onCopy }) =>
   };
 
   const renderTextContent = () => {
-    if (node.type !== 'TEXT' || !node.characters) return null;
-    
+    if (node.type !== "TEXT" || !node.characters) return null;
+
     return (
       <div className="property-section">
         <h3>Text Content</h3>
@@ -387,7 +435,7 @@ const NodeDetail: React.FC<NodeDetailProps> = ({ node, credentials, onCopy }) =>
 
   const renderAutoLayout = () => {
     if (!node.layoutMode) return null;
-    
+
     return (
       <div className="property-section">
         <h3>Auto Layout</h3>
@@ -421,7 +469,7 @@ const NodeDetail: React.FC<NodeDetailProps> = ({ node, credentials, onCopy }) =>
 
   const renderImagePreview = () => {
     if (!shouldShowPreview(node) || !credentials) return null;
-    
+
     return (
       <div className="property-section">
         <h3>Visual Preview</h3>
@@ -436,15 +484,18 @@ const NodeDetail: React.FC<NodeDetailProps> = ({ node, credentials, onCopy }) =>
               lazy={false}
               className="node-preview-large"
               alt={`Preview of ${node.name}`}
-              onLoad={(imageUrl) => {
+              onLoad={() => {
                 // Image loaded successfully
               }}
               onError={(error) => {
-                console.warn(`Failed to load preview for node ${node.id}:`, error);
+                console.warn(
+                  `Failed to load preview for node ${node.id}:`,
+                  error
+                );
               }}
             />
           </div>
-          
+
           {hasImageFills(node) && (
             <div className="image-fills-note">
               <span className="info-icon">ℹ️</span>
@@ -458,13 +509,8 @@ const NodeDetail: React.FC<NodeDetailProps> = ({ node, credentials, onCopy }) =>
 
   return (
     <div className="node-detail">
-      {error && (
-        <ErrorMessage 
-          error={error}
-          onDismiss={() => setError(null)}
-        />
-      )}
-      
+      {error && <ErrorMessage error={error} onDismiss={() => setError(null)} />}
+
       <div className="node-detail-header">
         <h2>{node.name}</h2>
         <div className="copy-buttons">

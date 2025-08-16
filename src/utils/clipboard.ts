@@ -39,7 +39,6 @@ export const copyToClipboard = async (
       textArea.focus();
       textArea.select();
 
-      // eslint-disable-next-line deprecation/deprecation
       const successful = document.execCommand("copy");
       document.body.removeChild(textArea);
 

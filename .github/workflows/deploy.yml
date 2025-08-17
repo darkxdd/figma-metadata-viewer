@@ -1,56 +1,48 @@
 name: Deploy React + Vite content to Pages
 
 on:
-  # Runs on pushes targeting the default branch
   push:
     branches: ['main']
-
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# Sets the GITHUB_TOKEN permissions to allow deployment to GitHub Pages
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# Allow one concurrent deployment
 concurrency:
   group: 'pages'
   cancel-in-progress: true
 
 jobs:
-  # Single deploy job since we're just deploying
   deploy:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      # check out repo
       - name: Checkout
         uses: actions/checkout@v4
-      # setup nodejs
+
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
           node-version: lts/*
-      # install deps
+          cache: 'npm'
+
       - name: Install dependencies
-        run: npm i
-      # build project
+        run: npm install
+
       - name: Build
         run: npm run build
-      # setup pages
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
-      # upload generated artifact to pages 
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # upload dist folder
           path: './dist'
-        # finally deploy to gh pages
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4

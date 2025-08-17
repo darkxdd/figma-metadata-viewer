@@ -35,10 +35,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: lts/*
-          cache: 'npm'
       # install deps
       - name: Install dependencies
-        run: npm install
+        run: npm ci
       # build project
       - name: Build
         run: npm run build

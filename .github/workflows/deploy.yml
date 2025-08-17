@@ -38,7 +38,7 @@ jobs:
           cache: 'npm'
       # install deps
       - name: Install dependencies
-        run: npm i
+        run: npm install
       # build project
       - name: Build
         run: npm run build

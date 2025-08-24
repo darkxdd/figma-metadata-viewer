@@ -90,8 +90,8 @@ const NodeDetail: React.FC<NodeDetailProps> = ({
     return fills
       .filter((fill) => fill.visible !== false)
       .map((fill) => {
-        if (fill.type === "SOLID" && fill.color) {
-          return `background-color: ${formatColor(fill.color)};`;
+        if (fill.type === "SOLID" && (fill as any).color) {
+          return `background-color: ${formatColor((fill as any).color)};`;
         }
         return `/* ${fill.type} fill */`;
       });
@@ -110,8 +110,8 @@ const NodeDetail: React.FC<NodeDetailProps> = ({
     strokes
       .filter((stroke) => stroke.visible !== false)
       .forEach((stroke) => {
-        if (stroke.type === "SOLID" && stroke.color) {
-          result.push(`border-color: ${formatColor(stroke.color)};`);
+        if (stroke.type === "SOLID" && (stroke as any).color) {
+          result.push(`border-color: ${formatColor((stroke as any).color)};`);
           result.push(`border-style: solid;`);
         }
       });
@@ -123,27 +123,30 @@ const NodeDetail: React.FC<NodeDetailProps> = ({
     return effects
       .filter((effect) => effect.visible !== false)
       .map((effect) => {
+        const effectAny = effect as any;
         switch (effect.type) {
           case "DROP_SHADOW": {
-            const offsetX = effect.offset?.x || 0;
-            const offsetY = effect.offset?.y || 0;
-            const color = effect.color
-              ? formatColor(effect.color)
+            const offsetX = effectAny.offset?.x || 0;
+            const offsetY = effectAny.offset?.y || 0;
+            const radius = effectAny.radius || 0;
+            const color = effectAny.color
+              ? formatColor(effectAny.color)
               : "rgba(0,0,0,0.25)";
-            return `box-shadow: ${offsetX}px ${offsetY}px ${effect.radius}px ${color};`;
+            return `box-shadow: ${offsetX}px ${offsetY}px ${radius}px ${color};`;
           }
           case "INNER_SHADOW": {
-            const insetX = effect.offset?.x || 0;
-            const insetY = effect.offset?.y || 0;
-            const insetColor = effect.color
-              ? formatColor(effect.color)
+            const insetX = effectAny.offset?.x || 0;
+            const insetY = effectAny.offset?.y || 0;
+            const radius = effectAny.radius || 0;
+            const insetColor = effectAny.color
+              ? formatColor(effectAny.color)
               : "rgba(0,0,0,0.25)";
-            return `box-shadow: inset ${insetX}px ${insetY}px ${effect.radius}px ${insetColor};`;
+            return `box-shadow: inset ${insetX}px ${insetY}px ${radius}px ${insetColor};`;
           }
           case "LAYER_BLUR":
-            return `filter: blur(${effect.radius}px);`;
+            return `filter: blur(${effectAny.radius || 0}px);`;
           case "BACKGROUND_BLUR":
-            return `backdrop-filter: blur(${effect.radius}px);`;
+            return `backdrop-filter: blur(${effectAny.radius || 0}px);`;
           default:
             return `/* ${effect.type} effect */`;
         }
@@ -240,7 +243,7 @@ const NodeDetail: React.FC<NodeDetailProps> = ({
         JUSTIFIED: "justify",
       };
       result.push(
-        `text-align: ${textAlignMap[node.style.textAlignHorizontal]};`
+        `text-align: ${textAlignMap[node.style.textAlignHorizontal || 'LEFT']};`
       );
     }
 
@@ -262,7 +265,7 @@ const NodeDetail: React.FC<NodeDetailProps> = ({
 
     // Strokes (borders)
     if (node.strokes && node.strokes.length > 0) {
-      cssRules.push(...formatStrokes(node.strokes, node.strokeWeight));
+      cssRules.push(...formatStrokes(node.strokes, node.strokeWeight || 1));
     }
 
     // Effects (shadows, blur)
@@ -400,16 +403,16 @@ const NodeDetail: React.FC<NodeDetailProps> = ({
                 <span className="hidden-badge">Hidden</span>
               )}
             </div>
-            {fill.color && (
+            {(fill as any).color && (
               <div className="color-display">
                 <div
                   className="color-swatch"
-                  style={{ backgroundColor: formatColor(fill.color) }}
+                  style={{ backgroundColor: formatColor((fill as any).color) }}
                 />
                 <div className="color-values">
-                  <span className="monospace">{formatColor(fill.color)}</span>
+                  <span className="monospace">{formatColor((fill as any).color)}</span>
                   <span className="monospace">
-                    {formatColorHex(fill.color)}
+                    {formatColorHex((fill as any).color)}
                   </span>
                 </div>
               </div>

@@ -27,7 +27,7 @@ export const getImageFillIds = (node: FigmaNode): string[] => {
 
   return node.fills
     .filter(fill => fill.type === 'IMAGE' && fill.visible !== false && fill.imageRef)
-    .map(fill => fill.imageRef!)
+    .map(fill => (fill as any).imageRef!)
     .filter(Boolean);
 };
 

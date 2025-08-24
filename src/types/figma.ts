@@ -1,128 +1,103 @@
-// Core Figma API types based on the API documentation
+// Enhanced Figma API types using official @figma/rest-api-spec with extensions
+import type {
+  Node as FigmaDocumentNode,
+  GetFileResponse,
+  GetImagesResponse,
+  GetImageFillsResponse,
+  Component as FigmaComponent,
+  ComponentSet as FigmaComponentSet,
+  ComponentPropertyType,
+  Paint,
+  Effect,
+  RGBA as FigmaColor,
+  Rectangle as FigmaBoundingBox,
+  Transform,
+  TypeStyle as FigmaTextStyle,
+} from '@figma/rest-api-spec';
 
+// Extended types for backward compatibility
+export type FigmaNode = FigmaDocumentNode & {
+  // Ensure common properties are always available for our use cases
+  absoluteBoundingBox?: FigmaBoundingBox;
+  children?: FigmaNode[];
+  fills?: EnhancedPaint[];
+  strokes?: EnhancedPaint[];
+  effects?: EnhancedEffect[];
+  style?: EnhancedTextStyle;
+  characters?: string;
+  componentId?: string;
+  componentProperties?: Record<string, any>;
+  // Frame and layout properties
+  layoutMode?: 'HORIZONTAL' | 'VERTICAL' | 'NONE';
+  paddingTop?: number;
+  paddingRight?: number;
+  paddingBottom?: number;
+  paddingLeft?: number;
+  itemSpacing?: number;
+  primaryAxisAlignItems?: 'MIN' | 'CENTER' | 'MAX' | 'SPACE_BETWEEN';
+  counterAxisAlignItems?: 'MIN' | 'CENTER' | 'MAX';
+  layoutSizingHorizontal?: 'FIXED' | 'HUG' | 'FILL';
+  layoutSizingVertical?: 'FIXED' | 'HUG' | 'FILL';
+  layoutPositioning?: 'AUTO' | 'ABSOLUTE';
+  overflowDirection?: ('HORIZONTAL' | 'VERTICAL')[];
+  clipsContent?: boolean;
+  cornerRadius?: number;
+  rectangleCornerRadii?: number[];
+  // Additional properties for compatibility
+  strokeWeight?: number;
+  opacity?: number;
+  constraints?: {
+    horizontal: string;
+    vertical: string;
+  };
+};
+
+// Enhanced types for backward compatibility with additional properties
+export type EnhancedPaint = Paint & {
+  color?: FigmaColor;
+  gradientTransform?: Transform;
+};
+
+export type EnhancedEffect = Effect & {
+  offset?: { x: number; y: number };
+  radius?: number;
+  spread?: number;
+  color?: FigmaColor;
+};
+
+// Enhanced text style with all properties optional for compatibility
+export type EnhancedTextStyle = FigmaTextStyle & {
+  fontFamily?: string;
+  fontSize?: number;
+  fontWeight?: number;
+  lineHeightPx?: number;
+  textAlignHorizontal?: 'LEFT' | 'CENTER' | 'RIGHT' | 'JUSTIFIED';
+};
+
+// Re-export core types from official spec
+export type { 
+  GetFileResponse as FigmaApiResponse,
+  GetImagesResponse as FigmaImagesResponse,
+  GetImageFillsResponse as FigmaImageFillsResponse,
+  FigmaComponent as Component,
+  FigmaComponentSet as ComponentSet,
+  ComponentPropertyType,
+  Paint as Fill,
+  Paint as Stroke,
+  Effect,
+  FigmaColor as Color,
+  FigmaBoundingBox as BoundingBox,
+  Transform,
+  FigmaTextStyle as TextStyle
+};
+
+// Our application-specific types
 export interface FigmaCredentials {
   fileId: string;
   accessToken: string;
 }
 
-export interface BoundingBox {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-}
-
-export interface Color {
-  r: number;
-  g: number;
-  b: number;
-  a: number;
-}
-
-export interface Fill {
-  type: 'SOLID' | 'GRADIENT_LINEAR' | 'GRADIENT_RADIAL' | 'GRADIENT_ANGULAR' | 'GRADIENT_DIAMOND' | 'IMAGE';
-  color?: Color;
-  opacity?: number;
-  visible?: boolean;
-  // Image fill specific properties
-  imageRef?: string;
-  scaleMode?: 'FILL' | 'FIT' | 'CROP' | 'TILE';
-  imageTransform?: number[][];
-}
-
-export interface Stroke {
-  type: 'SOLID' | 'GRADIENT_LINEAR' | 'GRADIENT_RADIAL' | 'GRADIENT_ANGULAR' | 'GRADIENT_DIAMOND';
-  color?: Color;
-  opacity?: number;
-  visible?: boolean;
-}
-
-export interface Effect {
-  type: 'DROP_SHADOW' | 'INNER_SHADOW' | 'LAYER_BLUR' | 'BACKGROUND_BLUR';
-  color?: Color;
-  offset?: { x: number; y: number };
-  radius: number;
-  visible?: boolean;
-}
-
-export interface TextStyle {
-  fontFamily: string;
-  fontWeight: number;
-  fontSize: number;
-  textAlignHorizontal: 'LEFT' | 'CENTER' | 'RIGHT' | 'JUSTIFIED';
-  textAlignVertical: 'TOP' | 'CENTER' | 'BOTTOM';
-  lineHeightPx?: number;
-  letterSpacing?: number;
-}
-
-export interface FigmaNode {
-  id: string;
-  name: string;
-  type: string;
-  visible?: boolean;
-  children?: FigmaNode[];
-  absoluteBoundingBox?: BoundingBox;
-  fills?: Fill[];
-  strokes?: Stroke[];
-  strokeWeight?: number;
-  strokeAlign?: 'INSIDE' | 'OUTSIDE' | 'CENTER';
-  effects?: Effect[];
-  opacity?: number;
-  cornerRadius?: number;
-  
-  // Auto Layout properties
-  layoutMode?: 'HORIZONTAL' | 'VERTICAL';
-  itemSpacing?: number;
-  paddingTop?: number;
-  paddingRight?: number;
-  paddingBottom?: number;
-  paddingLeft?: number;
-  primaryAxisAlignItems?: 'MIN' | 'CENTER' | 'MAX' | 'SPACE_BETWEEN';
-  counterAxisAlignItems?: 'MIN' | 'CENTER' | 'MAX';
-  layoutSizingHorizontal?: 'FIXED' | 'HUG' | 'FILL';
-  layoutSizingVertical?: 'FIXED' | 'HUG' | 'FILL';
-  
-  // Text-specific properties
-  characters?: string;
-  style?: TextStyle;
-  
-  // Component-specific properties
-  componentId?: string;
-}
-
-export interface Component {
-  key: string;
-  name: string;
-  description: string;
-}
-
-export interface Style {
-  key: string;
-  name: string;
-  description: string;
-  styleType: 'FILL' | 'TEXT' | 'EFFECT' | 'GRID';
-}
-
-export interface FigmaApiResponse {
-  name: string;
-  lastModified: string;
-  thumbnailUrl: string;
-  version: string;
-  document: FigmaNode;
-  components: Record<string, Component>;
-  styles: Record<string, Style>;
-}
-
-export interface FigmaImagesResponse {
-  images: Record<string, string | null>;
-  status?: number;
-  err?: string;
-}
-
-export interface FigmaImageFillsResponse {
-  images: Record<string, string>;
-}
-
+// Standard file data structure
 export interface FigmaFileData {
   name: string;
   lastModified: string;
@@ -179,3 +154,75 @@ export interface ApiError {
   status?: number;
   type: 'AUTHENTICATION' | 'NETWORK' | 'NOT_FOUND' | 'RATE_LIMIT' | 'UNKNOWN';
 }
+
+// Enhanced types for AI-optimized processing
+import type {
+  SimplifiedDesign,
+  SimplifiedNode,
+  GlobalVars,
+  ExtractorFn,
+  TraversalOptions,
+} from '../extractors/types';
+
+import type {
+  DesignToken,
+  DesignTokens,
+} from '../utils/globalVariables';
+
+// Enhanced Figma API responses
+export interface EnhancedFigmaFileData {
+  name: string;
+  lastModified: string;
+  thumbnailUrl?: string;
+  document: FigmaNode;
+  components?: Record<string, FigmaComponent>;
+  componentSets?: Record<string, any>;
+  // Enhanced data from extractors
+  simplifiedDesign?: SimplifiedDesign;
+  globalVars?: GlobalVars;
+  designTokens?: DesignTokens;
+}
+
+// Enhanced metadata parser result
+export interface EnhancedParsedNodeMetadata {
+  originalMetadata: any;
+  simplifiedNode: SimplifiedNode;
+  designTokens: DesignToken[];
+  cssVariables: Record<string, string>;
+  extractionStats: {
+    processingTime: number;
+    extractorsUsed: string[];
+    globalVariablesCreated: number;
+    duplicatesAvoided: number;
+  };
+}
+
+// Enhanced extraction options
+export interface EnhancedExtractionOptions {
+  extractors?: ExtractorFn[];
+  traversalOptions?: TraversalOptions;
+  generateDesignTokens?: boolean;
+  generateGlobalVariables?: boolean;
+  optimizeForPerformance?: boolean;
+  includeLegacyFormat?: boolean;
+}
+
+// Enhanced API service options
+export interface EnhancedFigmaServiceOptions {
+  useEnhancedExtractors?: boolean;
+  extractionOptions?: EnhancedExtractionOptions;
+  cacheResults?: boolean;
+  enableImageProcessing?: boolean;
+  generateCSSVariables?: boolean;
+}
+
+// Re-export enhanced types for convenience
+export type {
+  SimplifiedDesign,
+  SimplifiedNode,
+  GlobalVars,
+  ExtractorFn,
+  TraversalOptions,
+  DesignToken,
+  DesignTokens,
+};

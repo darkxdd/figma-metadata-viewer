@@ -5,3 +5,5 @@ export { default as ErrorMessage } from './ErrorMessage';
 export { default as LoadingSpinner } from './LoadingSpinner';
 export { default as ImagePreview } from './ImagePreview';
 export { default as ImageFills } from './ImageFills';
+export { default as CodeGenerator } from './CodeGenerator';
+export { default as CodePreview } from './CodePreview';
